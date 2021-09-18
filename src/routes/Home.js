@@ -1,26 +1,34 @@
 import React, { useEffect } from "react";
 import { useState } from 'react';
 import { dbService } from "fbase";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs, onSnapshot, query } from "firebase/firestore";
 
 const Home = ({userObj})=> {
-    // console.log(userObj);
+
     const [oweet, setOweet] = useState("");
     const [oweets, setOweets] = useState([]);
 
-    const getOweets = async () => {
-        const dbOweets = await getDocs(collection(dbService, "oweets"));
-        // console.log(dbOweets);
+    // const getOweets = async () => {
+    //     const dbOweets = await getDocs(collection(dbService, "oweets"));
+    //     // console.log(dbOweets);
 
-        dbOweets.forEach((document) => {
-            const oweetObject = { ...document.data(), id: document.id };
-            setOweets((prev) => [oweetObject, ...prev])
-        });
+    //     dbOweets.forEach((document) => {
+    //         const oweetObject = { ...document.data(), id: document.id };
+    //         setOweets((prev) => [oweetObject, ...prev])
+    //     });
         
-    };
+    // };
 
     useEffect(() => {
-        getOweets();
+        // getOweets();
+        const q = query(collection(dbService, 'oweets'));
+        onSnapshot(q, snapshot => {
+            const oweetArr = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setOweets(oweetArr);
+        });
     }, []);
 
     const onSubmit = async (event) => {
