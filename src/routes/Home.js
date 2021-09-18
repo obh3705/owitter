@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from 'react';
 import { dbService } from "fbase";
 import { addDoc, collection, getDocs, onSnapshot, query } from "firebase/firestore";
+import Oweet from "components/Oweet";
 
 const Home = ({userObj})=> {
 
@@ -19,6 +20,8 @@ const Home = ({userObj})=> {
         
     // };
 
+    // 이부분 잘 공부해서 다시 익히기
+    // map 함수에 대해 정확히 이해하기
     useEffect(() => {
         // getOweets();
         const q = query(collection(dbService, 'oweets'));
@@ -31,6 +34,7 @@ const Home = ({userObj})=> {
         });
     }, []);
 
+    //async await 함수의 의미와 왜 써야하는 지 알아보기
     const onSubmit = async (event) => {
         event.preventDefault();
         // await dbService.collection("oweets").add({
@@ -41,6 +45,7 @@ const Home = ({userObj})=> {
         setOweet("");
     };
 
+    // 이 구문에 대해서 정확히 알기
     const onChange = (event) => {
         event.preventDefault();
         const {
@@ -63,9 +68,7 @@ const Home = ({userObj})=> {
             </form>
             <div>
                 {oweets.map((oweet) => (
-                    <div key={oweet.id}>
-                        <h4>{oweet.text}</h4>
-                    </div>
+                    <Oweet key={oweet.id} oweetObj={oweet} isOwner={oweet.creatorId === userObj.uid}/>
                 ))}
             </div>
         </>
