@@ -1,5 +1,6 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useState } from "react";
 
 const Oweet = ({oweetObj, isOwner}) => {
@@ -11,12 +12,16 @@ const Oweet = ({oweetObj, isOwner}) => {
         const ok = window.confirm("삭제하시겠습니까?");
 
         if (ok) {
-            console.log(oweetObj.id);
+            // console.log(oweetObj.id);
             // const data = await dbService.doc(`oweets/${oweetObj.id}`);
             // const data = doc(dbService, `oweets/${oweetObj.id}`);
-            const data = await deleteDoc(doc(dbService, `oweets/${oweetObj.id}`));
+            await deleteDoc(doc(dbService, `oweets/${oweetObj.id}`));
+
+            if (oweetObj.attachmentUrl != "") {
+                deleteObject(ref(storageService, oweetObj.attachmentUrl));
+            }
             
-            console.log(data);
+            // console.log(data);
         }
         
     }
@@ -52,6 +57,9 @@ const Oweet = ({oweetObj, isOwner}) => {
             ) : (
                     <>
                         <h4>{oweetObj.text}</h4>
+                        {oweetObj.attachmentUrl && (
+                            <img src={oweetObj.attachmentUrl} width="50px" height="50px" />
+                        )}
                         {isOwner && (
                             <>
                                 <button onClick={onDeleteClick}>Delete Oweet</button>

@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { useState } from 'react';
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { addDoc, collection, getDocs, onSnapshot, query } from "firebase/firestore";
 import Oweet from "components/Oweet";
+import { v4 as uuidv4 } from "uuid";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 const Home = ({ userObj }) => {
 
@@ -35,15 +37,29 @@ const Home = ({ userObj }) => {
         });
     }, []);
 
+
+    // await dbService.collection("oweets").add({
+    //     text: oweet,
+    //     createdAt: Date.now(),
+    // });
+
     //async await 함수의 의미와 왜 써야하는 지 알아보기
     const onSubmit = async (event) => {
         event.preventDefault();
-        // await dbService.collection("oweets").add({
-        //     text: oweet,
-        //     createdAt: Date.now(),
-        // });
-        await addDoc(collection(dbService, "oweets"), { text: oweet, createdAt: Date.now(), creatorId: userObj.uid, })
+
+        let attachmentUrl = "";
+        if (attachment != "") {
+            const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+            const response = await uploadString(attachmentRef, attachment, "data_url");
+            attachmentUrl = await getDownloadURL(response.ref);
+        }
+        await addDoc(collection(dbService, "oweets"), {
+            text: oweet, createdAt: Date.now(), creatorId: userObj.uid, attachmentUrl 
+            });
+
+
         setOweet("");
+        setAttachment("");
     };
 
     // 이 구문에 대해서 정확히 알기
