@@ -1,33 +1,45 @@
-import {authService, firebaseInstance} from "fbase";
+import { authService, firebaseInstance } from "fbase";
 import React, { useState } from "react";
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup} from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import AuthForm from "components/AuthForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faWitter,
+    faGoogle,
+    faTwitter,
+} from "@fortawesome/free-brands-svg-icons";
 
 const Auth = () => {
 
     const onSocialClick = async (event) => {
         const {
-            target : {name},
+            target: { name },
         } = event;
         let provider;
-        if (name === "google"){
+        if (name === "google") {
             provider = new firebaseInstance();
         }
 
         const data = await signInWithPopup(authService, provider);
-        
+
     }
 
     return (
-        <div>
+        <div className="authContainer">
+            <FontAwesomeIcon
+                icon={faTwitter}
+                color={"#04AAFF"}
+                size="3x"
+                style={{ marginBottom: 30 }}
+            />
             <AuthForm />
-            <div>
-                <button onClick={onSocialClick} name="google">
-                    Continue with Google
+            <div className="authBtns">
+                <button onClick={onSocialClick} name="google" className="authBtn">
+                    Continue with Google <FontAwesomeIcon icon={faGoogle} />
                 </button>
             </div>
         </div>
-        
+
     )
 };
 

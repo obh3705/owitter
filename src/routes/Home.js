@@ -43,14 +43,14 @@ const Home = ({ userObj }) => {
     //async await 함수의 의미와 왜 써야하는 지 알아보기
 
     return (
-        <>
+        <div className="container">
             <OweetFactory userObj={userObj} />
-            <div>
+            <div style={{ marginTop: 30 }}>
                 {oweets.map((oweet) => (
                     <Oweet key={oweet.id} oweetObj={oweet} isOwner={oweet.creatorId === userObj.uid} />
                 ))}
             </div>
-        </>
+        </div>
     );
 }
 

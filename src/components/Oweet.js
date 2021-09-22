@@ -1,9 +1,11 @@
+import { faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { dbService, storageService } from "fbase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import { useState } from "react";
 
-const Oweet = ({oweetObj, isOwner}) => {
+const Oweet = ({ oweetObj, isOwner }) => {
 
     const [editing, setEditing] = useState(false);
     const [newOweet, setNewOweet] = useState(oweetObj.text);
@@ -20,10 +22,10 @@ const Oweet = ({oweetObj, isOwner}) => {
             if (oweetObj.attachmentUrl != "") {
                 deleteObject(ref(storageService, oweetObj.attachmentUrl));
             }
-            
+
             // console.log(data);
         }
-        
+
     }
 
     const toggleEditing = () => {
@@ -32,7 +34,7 @@ const Oweet = ({oweetObj, isOwner}) => {
 
     const onChange = (event) => {
         const {
-            target: {value},
+            target: { value },
         } = event;
         setNewOweet(value);
     };
@@ -40,19 +42,19 @@ const Oweet = ({oweetObj, isOwner}) => {
     const onSubmit = async (event) => {
         event.preventDefault();
         // console.log(oweetObj.id, newOweet);
-        await updateDoc(doc(dbService, `oweets/${oweetObj.id}`), {text: newOweet});
+        await updateDoc(doc(dbService, `oweets/${oweetObj.id}`), { text: newOweet });
         setEditing(false);
     };
 
     return (
-        <div>
+        <div className="nweet">
             {editing ? (
                 <>
-                    <form onSubmit={onSubmit}>
-                        <input onChange={onChange} value={newOweet} required />
-                        <input type="submit" value="Update Oweet" />
+                    <form onSubmit={onSubmit} className="container nweetEdit">
+                        <input onChange={onChange} value={newOweet} required placeholder="Edit your oweet" autoFocus className="formInput" />
+                        <input type="submit" value="Update Oweet" className="formBtn" />
                     </form>
-                    <button onClick={toggleEditing}>Cancel</button>
+                    <button onClick={toggleEditing} className="formBtn cancelBtn">Cancel</button>
                 </>
             ) : (
                     <>
@@ -61,15 +63,17 @@ const Oweet = ({oweetObj, isOwner}) => {
                             <img src={oweetObj.attachmentUrl} width="50px" height="50px" />
                         )}
                         {isOwner && (
-                            <>
-                                <button onClick={onDeleteClick}>Delete Oweet</button>
-                                <button onClick={toggleEditing}>Edit Oweet</button>
-                            </>
+                            <div className="nweet__actions">
+                                <span onClick={onDeleteClick}>
+                                    <FontAwesomeIcon icon={faTrash} />
+                                </span>
+                                <span onClick={toggleEditing}>
+                                    <FontAwesomeIcon icon={faPencilAlt} />
+                                </span>
+                            </div>
                         )}
                     </>
-            )}
-            
-            
+                )}
         </div>
     )
 }

@@ -1,11 +1,11 @@
 import React from "react";
-import {authService, dbService} from "fbase";
-import {useState,useEffect} from "react";
+import { authService, dbService } from "fbase";
+import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { collection, doc, getDocs, orderBy, query, where } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 
-const Profile = ({userObj, refreshUser}) => {
+const Profile = ({ userObj, refreshUser }) => {
 
     const history = useHistory();
     const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
@@ -30,7 +30,7 @@ const Profile = ({userObj, refreshUser}) => {
 
     const onChange = (event) => {
         const {
-            target: {value},
+            target: { value },
         } = event;
         setNewDisplayName(value);
     };
@@ -38,20 +38,22 @@ const Profile = ({userObj, refreshUser}) => {
     const onSubmit = async (event) => {
         event.preventDefault();
 
-        if(userObj.displayName !== newDisplayName) {
-            await updateProfile(authService.currentUser, {displayName: newDisplayName});
+        if (userObj.displayName !== newDisplayName) {
+            await updateProfile(authService.currentUser, { displayName: newDisplayName });
             refreshUser();
         }
     }
 
     return (
-        <>
-            <form onSubmit={onSubmit}>
-                <input onChange={onChange} value={newDisplayName} type="text" placeholder="Display name" />
-                <input type="submit" value="Update Profile" />
+        <div className="container" >
+            <form onSubmit={onSubmit} className="profileForm">
+                <input onChange={onChange} value={newDisplayName} type="text" placeholder="Display name" autoFocus className="formInput" />
+                <input type="submit" value="Update Profile" className="formBtn" style={{ marginTop: 10, }} />
             </form>
-            <button onClick={onLogOutClick}>Log Out</button>
-        </>
+            <span className="formBtn cancelBtn logOut" onClick={onLogOutClick}>
+                Log Out
+            </span>
+        </div>
     );
 };
 
